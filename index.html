@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>10 Web - DD Planet</title>
+	<link rel="stylesheet" type="text/css" href="CSS/style.css">
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+	<form method="POST" class="SendRequest" action="javascript:SendData();">
+		<h2>Сообщите нам о вашей проблеме</h2>
+		<input type="text" name="UserName" placeholder="Ваше ФИО">
+		<input type="text" name="Phone" placeholder="Ваш телефон" pattern="+7[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}">
+		<textarea id="Text" placeholder="Описание проблемы"></textarea>
+		<input type="submit" name="Go">
+	</form>
+
+	<div class="Windows-BG" id="WindowsList"></div>
+
+	<script type="text/javascript">
+		function CreateWindow(title, text)
+		{
+			let windowsBG = document.getElementById("WindowsList");
+			let windowHTML = "" +
+							"<div class='Popup-Window' id='PopupWindow'>" +
+							"	<h2>" + title + "</h2>" +
+							"	<p>" + text + "</p>" +
+							"	<div class='Window-Buttons'>" +
+							"		<a href='javascript:CloseWindow();'>Ок</a>" +
+							"	</div>" +
+							"</div>";
+
+			windowsBG.innerHTML = windowHTML;
+			windowsBG.style.opacity = 1;
+			windowsBG.style.pointerEvents = "all";
+			windowsBG.style.animation = "BGIn 0.5s forwards";
+		}
+
+		function CloseWindow()
+		{
+			let w = document.getElementById("PopupWindow");
+			let windowsBG = document.getElementById("WindowsList");
+			windowsBG.style.animation = "BGOut 1s forwards";
+			w.style.animation = "FadeOut 1s forwards";
+
+			setTimeout(() => {
+				windowsBG.innerHTML = "";
+				windowsBG.style.opacity = 0;
+				windowsBG.style.pointerEvents = "none";
+			}, 1000);
+		}
+
+		function SendData()
+		{
+		    var name = $("input[name='UserName']").val();
+		    var phone = $("input[name='Phone']").val();
+		    var text = $("#Text").val();
+
+		    $.ajax(
+		    {
+		        type: "POST",
+		        url: "/API/index.php",
+		        data: 
+		        {
+		        	ID: 0,
+		        	name: name,
+		        	phone: phone,
+		        	text: text
+		        }
+
+		    }).done(function(result)
+	        {
+	        	let res = result.split('|');
+	            CreateWindow(res[0], res[1]);
+	        });
+		}
+	</script>
+</body>
+</html>
